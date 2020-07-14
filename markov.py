@@ -8,6 +8,11 @@ def open_and_read_file(file_path):
 
     Takes a string that is a file path, opens the file, and turns
     the file's contents as one string of text.
+    Example:
+    >>> open_and_read_file("green-eggs.txt")
+    'Would you could you in a house?\nWould you could you with a mouse?\n
+    Would you could you in a box?\nWould you could you with a fox?\n
+    Would you like green eggs and ham?\nWould you like them, Sam I am?\n'
     """
 
     # your code goes here
@@ -42,8 +47,37 @@ def make_chains(text_string):
     """
 
     chains = {}
-
+    text = text_string.split()
+    # print(text)
+    len_text = len(text)
     # your code goes here
+    for word, idx in enumerate(text):
+        
+        if word + 2 < len_text:
+            # print(text[word], text[word+1], text[word+2])
+            if (text[word], text[word+1]) in chains.keys():
+                # print("tuple already in dictionary")
+                value_list = chains[(text[word], text[word+1])]
+                # print(chains[(text[word], text[word+1])], value_list)
+                # print("already in list")
+                # print(value_list)
+                if len(value_list) > 0: 
+                    value_list.append(text[word+2])
+                    chains[(text[word], text[word+1])] = value_list
+                    # print(len(chains[(text[word], text[word+1])]))
+                else:
+                    value_list = [text[word+2]]
+                    # print(value_list, "trying to get rid of none")
+                    chains[(text[word], text[word+1])] = value_list
+                # need to extend list this the value
+            else:
+                # print("not in dictionary, making tuples")
+                chains[(text[word], text[word+1])] = chains.get((text[word], text[word+1]),[text[word+2]])
+                #print("first addition",chains[(text[word], text[word+1])] )
+            
+
+    for tuple_, list_ in chains.items():
+        print(f"n-gram: {tuple_}, \n options: {list_}")
 
     return chains
 
