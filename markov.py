@@ -1,6 +1,8 @@
 """Generate Markov text from text files."""
 
 from random import choice
+import sys
+
 
 
 def open_and_read_file(file_path):
@@ -50,34 +52,36 @@ def make_chains(text_string):
     text = text_string.split()
     # print(text)
     len_text = len(text)
-    # your code goes here
+    # loop over text with indices
     for word, idx in enumerate(text):
-        
+        # if word is two away from end of the text, stop
         if word + 2 < len_text:
-            # print(text[word], text[word+1], text[word+2])
+            # if already a key, append new "third word option" to values list
             if (text[word], text[word+1]) in chains.keys():
-                # print("tuple already in dictionary")
-                value_list = chains[(text[word], text[word+1])]
-                # print(chains[(text[word], text[word+1])], value_list)
-                # print("already in list")
-                # print(value_list)
-                if len(value_list) > 0: 
-                    value_list.append(text[word+2])
-                    chains[(text[word], text[word+1])] = value_list
+                # get current word list
+                next_word_list = chains[(text[word], text[word+1])]
+                # if it exists, append new word
+                if len(next_word_list) > 0: 
+                    next_word_list.append(text[word+2])
+                    chains[(text[word], text[word+1])] = next_word_list
                     # print(len(chains[(text[word], text[word+1])]))
                 else:
-                    value_list = [text[word+2]]
-                    # print(value_list, "trying to get rid of none")
-                    chains[(text[word], text[word+1])] = value_list
-                # need to extend list this the value
+                    next_word_list = [text[word+2]]
+                    # create first word in next word list
+                    chains[(text[word], text[word+1])] = next_word_list
+                
             else:
-                # print("not in dictionary, making tuples")
+                # create bigram key in dictionary chains
                 chains[(text[word], text[word+1])] = chains.get((text[word], text[word+1]),[text[word+2]])
-                #print("first addition",chains[(text[word], text[word+1])] )
-            
+                
+        else:
+            #if at the end of the list, set 'end of text word'
+            chains[(text[word], text[word+1])] = None
+            break
 
-    for tuple_, list_ in chains.items():
-        print(f"n-gram: {tuple_}, \n options: {list_}")
+
+    # for tuple_, list_ in chains.items():
+    #     print(f"n-gram: {tuple_}, \n options: {list_}")
 
     return chains
 
@@ -86,21 +90,31 @@ def make_text(chains):
     """Return text from chains."""
 
     words = []
-
+    not_end_of_list = True
     # your code goes here
+    # use random.choice to pick a bigram element from keys
+    while not_end_of_list:
+        choice_n = choice(list(chains.keys()))
+        # add bigram key  to word list
+        words.extend(choice_n)
+        if chains[choice_n]:
+            choose_third = choice(chains[choice_n])
+            words.append(choose_third)
+            # print(words)
+        else:
+            not_end_of_list = False
 
     return " ".join(words)
 
 
-input_path = "green-eggs.txt"
 
-# Open the file and turn it into one long string
-input_text = open_and_read_file(input_path)
+if __name__ == '__main__':
 
-# Get a Markov chain
-chains = make_chains(input_text)
-
-# Produce random text
-random_text = make_text(chains)
-
-print(random_text)
+    input_path = sys.argv[1]
+    # Open the file and turn it into one long string
+    input_text = open_and_read_file(input_path)
+    # Get a Markov chain
+    chains = make_chains(input_text)
+    # Produce random text
+    random_text = make_text(chains)
+    print(random_text)
