@@ -29,10 +29,9 @@ def make_chains(text_string, n_gram):
     A chain will be a key that consists of a tuple of (word1, word2)
     and the value would be a list of the word(s) that follow those two
     words in the input text.
-     to make a n-gram... would need to use an *arg list... for x in *arg, len(arg)
-     # found the tuple(list) idea from here : https://www.geeksforgeeks.org/python-convert-a-list-into-a-tuple/#:~:text=Itertools.Permutations()-,Python%20%7C%20Convert%20a%20list%20into%20a%20tuple,given%20list%20into%20a%20tuple.&text=Approach%20%231%20%3A%20Using%20tuple(,simply%20using%20tuple(list_name).
-     for x in range(len(arg))
-     key = text[:n]
+     
+    # found the tuple(list) idea from here : https://www.geeksforgeeks.org/python-convert-a-list-into-a-tuple/#:~:text=Itertools.Permutations()-,Python%20%7C%20Convert%20a%20list%20into%20a%20tuple,given%20list%20into%20a%20tuple.&text=Approach%20%231%20%3A%20Using%20tuple(,simply%20using%20tuple(list_name).
+     
     For example:
 
         >>> chains = make_chains("hi there mary hi there juanita")
@@ -67,12 +66,12 @@ def make_chains(text_string, n_gram):
         chains[key_tuple] = next_word_list
         
     # set last n-gram as stop phrase           
-    key_tuple = tuple(text[word:word+n_gram])
+    key_tuple = tuple(text[word+1:word+n_gram+1])
     chains[key_tuple] = None
             
     # # print dictionary
-    # for tuple_, list_ in chains.items():
-    #     print(f"n-gram: {tuple_}, \n options: {list_}")
+    for tuple_, list_ in chains.items():
+        print(f"n-gram: {tuple_}, \n options: {list_}")
 
     return chains
 
@@ -84,14 +83,31 @@ def make_text(chains):
     not_end_of_list = True
     # your code goes here
     # use random.choice to pick a bigram element from keys
-    # make a list of capitalized keys? make a list of punctuation?
+    # make a list of capitalized keys
+    # capitalized_ngrams = []
+    # for key in chains.keys():
+    #     # check if the first tuple in key[0][0]
+    #     if key[0][0].isupper():
+    #         capitalized_ngrams.append(key)
+    # # print(capitalized_ngrams)
+    # choice_n = choice(capitalized_ngrams)
+    # # add bigram key  to word list
+    # words.extend(choice_n)
+    # if chains[choice_n]:
+    #     choose_third = choice(chains[choice_n])
+    #     words.append(choose_third)
+
+
     while not_end_of_list:
         choice_n = choice(list(chains.keys()))
         # add bigram key  to word list
         words.extend(choice_n)
         if chains[choice_n]:
+            # as long as there is an option, picks a random element from dict list
             choose_third = choice(chains[choice_n])
-            words.append(choose_third)
+            next_key_options = [x.lower().startswith(choose_third.lower()) for x in chains.key()]
+            print(next_key_options)
+
             # print(words)
         else:
             not_end_of_list = False
@@ -104,7 +120,7 @@ if __name__ == '__main__':
     # python3 markov text.txt no_n_grams
     input_path = sys.argv[1]
     n_grams = sys.argv[2]
-    print(n_grams)
+    
     # Open the file and turn it into one long string
     input_text = open_and_read_file(input_path)
     # Get a Markov chain
