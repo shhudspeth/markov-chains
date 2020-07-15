@@ -69,9 +69,9 @@ def make_chains(text_string, n_gram):
     key_tuple = tuple(text[word+1:word+n_gram+1])
     chains[key_tuple] = None
             
-    # # print dictionary
-    for tuple_, list_ in chains.items():
-        print(f"n-gram: {tuple_}, \n options: {list_}")
+    # # # print dictionary
+    # for tuple_, list_ in chains.items():
+    #     print(f"n-gram: {tuple_}, \n options: {list_}")
 
     return chains
 
@@ -97,16 +97,23 @@ def make_text(chains):
     #     choose_third = choice(chains[choice_n])
     #     words.append(choose_third)
 
-
+    selected_keys = list(chains.keys())
     while not_end_of_list:
-        choice_n = choice(list(chains.keys()))
+        choice_n = choice(selected_keys)
         # add bigram key  to word list
         words.extend(choice_n)
         if chains[choice_n]:
             # as long as there is an option, picks a random element from dict list
             choose_third = choice(chains[choice_n])
-            next_key_options = [x.lower().startswith(choose_third.lower()) for x in chains.key()]
-            print(next_key_options)
+            
+            # creates a list of keys whose first item in tuple is item from list
+            selected_keys = [x for x in chains.keys() if x[0].lower().startswith(choose_third.lower())]
+            if selected_keys:
+                pass
+            else:
+                words.extend(choose_third)
+                not_end_of_list = False
+
 
             # print(words)
         else:
