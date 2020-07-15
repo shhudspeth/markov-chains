@@ -87,8 +87,8 @@ def make_chains(text_string, n_gram):
             break
 
 
-    for tuple_, list_ in chains.items():
-        print(f"n-gram: {tuple_}, \n options: {list_}")
+    # for tuple_, list_ in chains.items():
+    #     print(f"n-gram: {tuple_}, \n options: {list_}")
 
     return chains
 
