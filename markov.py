@@ -53,40 +53,24 @@ def make_chains(text_string, n_gram):
 
     chains = {}
     text = text_string.split()
-    # print(text)
-    len_text = len(text)
+    
     n_gram = int(n_gram)
-    # loop over text with indices
-    for word, idx in enumerate(text):
-        # if word is two away from end of the text, stop
-        if word + n_gram < len_text:
-            key_tuple = tuple(text[word:word+n_gram])
-            print(key_tuple)
-            # if already a key, append new "third word option" to values list
-            if (key_tuple) in chains.keys():
-                # get current word list
-                next_word_list = chains[key_tuple]
-                # if it exists, append new word
-                if len(next_word_list) > 0: 
-                    next_word_list.append(text[word+n_gram])
-                    chains[key_tuple] = next_word_list
-                    # print(len(chains[(text[word], text[word+1])]))
-                else:
-                    next_word_list = [text[word+n_gram]]
-                    # create first word in next word list
-                    chains[key_tuple] = next_word_list
-                
-            else:
-                # create bigram key in dictionary chains
-                chains[key_tuple] = chains.get(key_tuple,[text[word+n_gram]])
-                
-        else:
-            #if at the end of the list, set 'end of text word'
-            key_tuple = tuple(text[word:word+n_gram])
-            chains[key_tuple] = None
-            break
-
-
+    # loop over text with indices, stop n-gram away
+    for word in range(len(text)-n_gram):
+        # set key tuple of n-gram words
+        key_tuple = tuple(text[word:word+n_gram])
+        # get current next word list
+        next_word_list = chains.get(key_tuple,[])
+        # append the next word to list
+        next_word_list.append(text[word+n_gram]) 
+        # set new next word list as the dictionary entry 
+        chains[key_tuple] = next_word_list
+        
+    # set last n-gram as stop phrase           
+    key_tuple = tuple(text[word:word+n_gram])
+    chains[key_tuple] = None
+            
+    # # print dictionary
     # for tuple_, list_ in chains.items():
     #     print(f"n-gram: {tuple_}, \n options: {list_}")
 
@@ -100,6 +84,7 @@ def make_text(chains):
     not_end_of_list = True
     # your code goes here
     # use random.choice to pick a bigram element from keys
+    # make a list of capitalized keys? make a list of punctuation?
     while not_end_of_list:
         choice_n = choice(list(chains.keys()))
         # add bigram key  to word list
